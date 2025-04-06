@@ -1,34 +1,40 @@
 <template>
   <el-container class="layout-container">
-    <el-aside :width="isCollapse ? '64px' : '200px'" class="aside">
+    <el-aside :width="isCollapse ? '64px' : '200px'"
+              class="aside">
       <div class="logo">
-        <img src="@/assets/logo.png" alt="Logo" class="logo-img">
-        <span class="logo-text" v-show="!isCollapse">{{ $t('app.name') }}</span>
+        <img src="@/assets/logo.png"
+             alt="Logo"
+             class="logo-img">
+        <span class="logo-text"
+              v-show="!isCollapse">{{ $t('app.name') }}</span>
       </div>
-      <el-menu
-        :default-active="route.path"
-        class="menu"
-        :router="true"
-        :collapse="isCollapse"
-        :background-color="isDark ? '#1a1a1a' : '#fff'"
-        :text-color="isDark ? '#fff' : '#333'"
-        :active-text-color="isDark ? '#409EFF' : '#409EFF'"
-      >
+      <el-menu :default-active="route.path"
+               class="menu"
+               :router="true"
+               :collapse="isCollapse"
+               :background-color="isDark ? '#1a1a1a' : '#fff'"
+               :text-color="isDark ? '#fff' : '#333'"
+               :active-text-color="isDark ? '#409EFF' : '#409EFF'">
         <el-menu-item index="/">
-          <el-icon><HomeFilled /></el-icon>
+          <el-icon>
+            <HomeFilled />
+          </el-icon>
           <template #title>{{ $t('menu.home') }}</template>
         </el-menu-item>
         <el-sub-menu index="/tools">
           <template #title>
-            <el-icon><Tools /></el-icon>
+            <el-icon>
+              <Tools />
+            </el-icon>
             <span>{{ $t('menu.tools') }}</span>
           </template>
-          <el-menu-item 
-            v-for="tool in tools" 
-            :key="tool.id" 
-            :index="`/tools/${tool.id}`"
-          >
-            <el-icon><component :is="tool.icon" /></el-icon>
+          <el-menu-item v-for="tool in tools"
+                        :key="tool.id"
+                        :index="`/tools/${tool.id}`">
+            <el-icon>
+              <component :is="tool.icon" />
+            </el-icon>
             <template #title>{{ $t(`tools.${tool.id}.title`) }}</template>
           </el-menu-item>
         </el-sub-menu>
@@ -38,11 +44,9 @@
     <el-container>
       <el-header class="header">
         <div class="header-left">
-          <el-button
-            type="text"
-            @click="toggleCollapse"
-            class="collapse-btn"
-          >
+          <el-button type="text"
+                     @click="toggleCollapse"
+                     class="collapse-btn">
             <el-icon :size="20">
               <Fold v-if="!isCollapse" />
               <Expand v-else />
@@ -62,11 +66,9 @@
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <el-button
-            type="text"
-            @click="toggleTheme"
-            class="theme-btn"
-          >
+          <el-button type="text"
+                     @click="toggleTheme"
+                     class="theme-btn">
             <el-icon :size="20">
               <Sunny v-if="isDark" />
               <Moon v-else />
@@ -78,27 +80,31 @@
       <el-main class="main">
         <router-view />
       </el-main>
+
+      <el-footer class="footer">
+        <div class="copyright">
+          © {{ currentYear }} {{ $t('app.name') }}. Gamehu{{ $t('footer.copyright') }}
+        </div>
+      </el-footer>
     </el-container>
   </el-container>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
-import { useThemeStore } from '@/stores/theme'
 import tools from '@/config/tools'
+import { useThemeStore } from '@/stores/theme'
 import {
-  HomeFilled,
-  Tools,
-  Fold,
-  Expand,
-  ArrowDown,
-  Sunny,
-  Moon,
-  DataLine,
-  Document
+ArrowDown,
+Expand,
+Fold,
+HomeFilled,
+Moon,
+Sunny,
+Tools,
 } from '@element-plus/icons-vue'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const { locale } = useI18n()
@@ -108,6 +114,7 @@ const isCollapse = ref(false)
 const isDark = computed(() => themeStore.isDark)
 
 const currentLang = computed(() => locale.value)
+const currentYear = computed(() => new Date().getFullYear())
 
 const toggleCollapse = () => {
   isCollapse.value = !isCollapse.value
@@ -199,8 +206,24 @@ const handleCommand = (command) => {
   background-color: var(--el-bg-color-page);
   padding: 20px;
   width: 100%;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 100px);
   overflow: auto;
+}
+
+.footer {
+  height: 40px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--el-bg-color);
+  border-top: 1px solid var(--el-border-color);
+}
+
+.copyright {
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+  text-align: center;
 }
 
 :deep(.el-menu-item.is-active) {
@@ -248,7 +271,8 @@ const handleCommand = (command) => {
   border: 1px solid var(--el-border-color-light);
 }
 
-:deep(.editor-panel), :deep(.preview-panel) {
+:deep(.editor-panel),
+:deep(.preview-panel) {
   flex: 1;
   height: 100%;
   overflow: auto;
@@ -298,19 +322,21 @@ const handleCommand = (command) => {
     z-index: 10;
     height: 100vh;
   }
-  
+
   .main {
     padding: 16px;
+    height: calc(100vh - 100px);
   }
-  
+
   :deep(.tool-body) {
     flex-direction: column;
   }
-  
-  :deep(.editor-panel), :deep(.preview-panel) {
+
+  :deep(.editor-panel),
+  :deep(.preview-panel) {
     height: 50%;
   }
-  
+
   :deep(.editor-panel) {
     border-right: none;
     border-bottom: 1px solid var(--el-border-color-light);
