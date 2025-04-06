@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import MainLayout from '../components/layout/MainLayout.vue'
 import tools from '@/config/tools'
 import i18n from '@/i18n'
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import MainLayout from '../components/layout/MainLayout.vue'
 
 const { t } = i18n.global
 
@@ -11,10 +11,10 @@ const toolRoutes = tools.map(tool => ({
   name: tool.id.charAt(0).toUpperCase() + tool.id.slice(1),
   component: tool.component,
   meta: {
-    title: t(`tools.${tool.id}.meta.title`),
-    description: t(`tools.${tool.id}.meta.description`),
-    keywords: t(`tools.${tool.id}.meta.keywords`),
-    keepAlive: tool.meta.keepAlive
+    title: t(`tools.${tool.id}.title`),
+    description: t(`tools.${tool.id}.description`),
+    keywords: t(`tools.${tool.id}.keywords`),
+    keepAlive: tool.keepAlive
   }
 }))
 
@@ -28,9 +28,9 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Home',
         component: () => import('@/views/Home.vue'),
         meta: {
-          title: t('home.meta.title'),
-          description: t('home.meta.description'),
-          keywords: t('home.meta.keywords')
+          title: t('home.title'),
+          description: t('home.description'),
+          keywords: t('home.keywords')
         }
       },
       ...toolRoutes
