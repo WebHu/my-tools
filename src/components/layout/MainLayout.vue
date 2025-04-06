@@ -29,9 +29,6 @@
             circle
             @click="toggleTheme"
           />
-              <div class="mt-4 p-4 bg-white dark:bg-black text-black dark:text-white border rounded">
-      当前主题: {{ themeStore.isDark ? '暗色' : '亮色' }}
-    </div>
         </div>
       </el-header>
       <el-main>

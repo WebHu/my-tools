@@ -1,3 +1,24 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  /* 其他亮色模式变量 */
+}
+
+html.dark {
+  --bg-color: #1a1a1a;
+  --text-color: #ffffff;
+  /* 其他暗色模式变量 */
+  
+  /* Element Plus 变量覆盖 */
+  --el-bg-color: #1a1a1a;
+  --el-bg-color-page: #121212;
+  --el-text-color-primary: #ffffff;
+  --el-border-color: #333333;
+}
+
+/* 全局应用这些变量 */
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}

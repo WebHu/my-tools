@@ -1,14 +1,14 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
-import router from './router'
-import pinia from './stores'
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import './styles/main.css'
-import { Component } from 'vue'
-
+import * as ElementPlusIconsVue from '@element-plus/icons-vue';
+import ElementPlus from 'element-plus';
+// 支持主题切换
+import 'element-plus/dist/index.css';
+import 'element-plus/theme-chalk/dark/css-vars.css';
+import { Component, createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import pinia from './stores';
+import './style.css';
+import './styles/main.css';
 const app = createApp(App)
 
 // 注册所有图标

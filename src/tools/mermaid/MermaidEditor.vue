@@ -6,20 +6,20 @@
           <template #header>
             <div class="card-header">
               <span>编辑区</span>
-              <el-button-group>
-                <el-button type="primary" @click="updatePreview">
+              <div class="button-group">
+                <el-button size="small" type="primary" @click="updatePreview">
                   <el-icon><Refresh /></el-icon>
                   更新预览
                 </el-button>
-                <el-button type="success" @click="downloadSource">
+                <el-button size="small" type="success" @click="downloadSource">
                   <el-icon><Download /></el-icon>
                   下载源码
                 </el-button>
-                <el-button type="warning" @click="downloadImage">
+                <el-button size="small" type="warning" @click="downloadImage">
                   <el-icon><Picture /></el-icon>
                   下载图片
                 </el-button>
-              </el-button-group>
+              </div>
             </div>
           </template>
           <el-input
@@ -28,6 +28,7 @@
             :rows="20"
             placeholder="在此输入 Mermaid 代码"
             @input="debouncedUpdate"
+            class="code-editor"
           />
         </el-card>
       </el-col>
@@ -45,21 +46,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import mermaid from 'mermaid'
 import { Refresh, Download, Picture } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
-const mermaidCode = ref(`graph TD
+const mermaidCode = ref<string>(`graph TD
     A[开始] --> B{判断}
     B -->|是| C[执行操作1]
     B -->|否| D[执行操作2]
     C --> E[结束]
     D --> E`)
 
-const previewContainer = ref(null)
-let debounceTimer = null
+const previewContainer = ref<HTMLElement | null>(null)
+let debounceTimer: number | null = null
 
 // 初始化 Mermaid
 mermaid.initialize({
@@ -74,25 +75,25 @@ mermaid.initialize({
 })
 
 // 更新预览
-const updatePreview = async () => {
+const updatePreview = async (): Promise<void> => {
   if (!previewContainer.value) return
   
   try {
     const { svg } = await mermaid.render('mermaid-svg', mermaidCode.value)
     previewContainer.value.innerHTML = svg
-  } catch (error) {
+  } catch (error: any) {
     ElMessage.error('渲染失败：' + error.message)
   }
 }
 
 // 防抖更新
-const debouncedUpdate = () => {
-  clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(updatePreview, 500)
+const debouncedUpdate = (): void => {
+  if (debounceTimer) clearTimeout(debounceTimer)
+  debounceTimer = window.setTimeout(updatePreview, 500)
 }
 
 // 下载源码
-const downloadSource = () => {
+const downloadSource = (): void => {
   const blob = new Blob([mermaidCode.value], { type: 'text/plain' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -105,9 +106,9 @@ const downloadSource = () => {
 }
 
 // 下载图片
-const downloadImage = async () => {
+const downloadImage = async (): Promise<void> => {
   try {
-    const svgElement = previewContainer.value.querySelector('svg')
+    const svgElement = previewContainer.value?.querySelector('svg')
     if (!svgElement) {
       ElMessage.warning('请先生成预览图')
       return
@@ -116,6 +117,11 @@ const downloadImage = async () => {
     const svgData = new XMLSerializer().serializeToString(svgElement)
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
+    if (!ctx) {
+      ElMessage.error('无法创建画布上下文')
+      return
+    }
+    
     const img = new Image()
     
     img.onload = () => {
@@ -133,7 +139,7 @@ const downloadImage = async () => {
     }
     
     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)))
-  } catch (error) {
+  } catch (error: any) {
     ElMessage.error('下载图片失败：' + error.message)
   }
 }
@@ -143,7 +149,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  clearTimeout(debounceTimer)
+  if (debounceTimer) clearTimeout(debounceTimer)
 })
 </script>
 
@@ -167,6 +173,22 @@ onUnmounted(() => {
   align-items: center;
 }
 
+.button-group {
+  display: flex;
+  gap: 3px;
+}
+
+.code-editor :deep(.el-textarea__inner) {
+  font-family: 'Fira Code', Monaco, Consolas, 'Courier New', monospace;
+  line-height: 1.6;
+  padding: 12px;
+  font-size: 14px;
+  background-color: #282c34;
+  color: #abb2bf;
+  border-radius: 4px;
+  tab-size: 2;
+}
+
 .preview-container {
   height: calc(100% - 40px);
   overflow: auto;
@@ -175,10 +197,11 @@ onUnmounted(() => {
   align-items: center;
   background-color: #f5f7fa;
   padding: 20px;
+  border-radius: 4px;
 }
 
 .preview-container svg {
   max-width: 100%;
   max-height: 100%;
 }
-</style> 
+</style>
