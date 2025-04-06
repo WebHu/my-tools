@@ -4,6 +4,11 @@
 
 A collection of practical online tools built with Vue 3 and modern web technologies.
 
+
+The tool list is as follows:
+ - mermaid
+ - markdown
+
 ## Features
 
 - **Mermaid Diagram Editor**: Create and edit diagrams with real-time preview
@@ -27,7 +32,7 @@ A collection of practical online tools built with Vue 3 and modern web technolog
 
 ### Prerequisites
 
-- Node.js 16.x or later
+- Node.js 18.x or later
 - npm 7.x or later
 
 ### Installation
@@ -48,7 +53,7 @@ npm install
 npm run dev
 ```
 
-This will start the development server at http://localhost:5173 (or another available port).
+This will start the development server at http://localhost:3000 (or another available port).
 
 ### Building for Production
 
