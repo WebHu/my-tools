@@ -5,13 +5,13 @@
         <el-card class="editor-card">
           <template #header>
             <div class="card-header">
-              <span>编辑区</span>
+              <span>{{ $t('tools.markdown.editor') }}</span>
               <div class="button-group">
                 <el-button size="small" type="success" @click="downloadMarkdown">
                   <el-icon>
                     <Download />
                   </el-icon>
-                  下载源码
+                  {{ $t('tools.markdown.downloadMarkdown') }}
                 </el-button>
               </div>
             </div>
@@ -20,8 +20,7 @@
             v-model="markdownContent"
             type="textarea"
             :rows="30"
-            placeholder="在此输入 Markdown 内容"
-            @input="updatePreview"
+            :placeholder="$t('tools.markdown.placeholder')"
             class="code-editor"
           />
         </el-card>
@@ -30,7 +29,7 @@
         <el-card class="preview-card">
           <template #header>
             <div class="card-header">
-              <span>预览区</span>
+              <span>{{ $t('tools.markdown.preview') }}</span>
             </div>
           </template>
           <div class="preview-container prose dark:prose-invert max-w-none" v-html="renderedContent"></div>
@@ -44,19 +43,22 @@
 import { Download } from '@element-plus/icons-vue'
 import { marked } from 'marked'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-const markdownContent = ref<string>(`# Markdown 编辑器
+const { t } = useI18n()
 
-这是一个简单的 Markdown 编辑器示例。
+const markdownContent = ref<string>(`# ${t('tools.markdown.example.title')}
 
-## 功能特点
+${t('tools.markdown.example.description')}
 
-- 实时预览
-- 支持 Markdown 语法
-- 可以下载 Markdown 源码
-- 可以下载 HTML 文件
+## ${t('tools.markdown.example.features')}
 
-## 代码示例
+- ${t('tools.markdown.example.feature1')}
+- ${t('tools.markdown.example.feature2')}
+- ${t('tools.markdown.example.feature3')}
+- ${t('tools.markdown.example.feature4')}
+
+## ${t('tools.markdown.example.code')}
 
 \`\`\`javascript
 function hello() {
@@ -64,18 +66,18 @@ function hello() {
 }
 \`\`\`
 
-## 表格示例
+## ${t('tools.markdown.example.table')}
 
-| 功能 | 描述 |
+| ${t('tools.markdown.example.feature')} | ${t('tools.markdown.example.description')} |
 |------|------|
-| 实时预览 | 输入时自动更新预览 |
-| 下载功能 | 支持多种格式导出 |
+| ${t('tools.markdown.example.preview')} | ${t('tools.markdown.example.previewDesc')} |
+| ${t('tools.markdown.example.export')} | ${t('tools.markdown.example.exportDesc')} |
 
-## 图片示例
+## ${t('tools.markdown.example.image')}
 
-![示例图片](https://via.placeholder.com/150)
+![${t('tools.markdown.example.imageAlt')}](https://via.placeholder.com/150)
 
-> 提示：这是一个引用示例
+> ${t('tools.markdown.example.quote')}
 `)
 
 // 配置 marked

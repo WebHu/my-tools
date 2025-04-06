@@ -1,26 +1,58 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import MainLayout from '../components/layout/MainLayout.vue'
+import tools from '@/config/tools'
+import i18n from '@/i18n'
+
+const { t } = i18n.global
+
+// 构建工具路由
+const toolRoutes = tools.map(tool => ({
+  path: `tools/${tool.id}`,
+  name: tool.id.charAt(0).toUpperCase() + tool.id.slice(1),
+  component: tool.component,
+  meta: {
+    title: t(`tools.${tool.id}.meta.title`),
+    description: t(`tools.${tool.id}.meta.description`),
+    keywords: t(`tools.${tool.id}.meta.keywords`),
+    keepAlive: tool.meta.keepAlive
+  }
+}))
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'Home',
-    component: () => import('@/views/Home.vue')
+    component: MainLayout,
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: () => import('@/views/Home.vue'),
+        meta: {
+          title: t('home.meta.title'),
+          description: t('home.meta.description'),
+          keywords: t('home.meta.keywords')
+        }
+      },
+      ...toolRoutes
+    ]
   },
   {
-    path: '/mermaid',
-    name: 'Mermaid',
-    component: () => import('@/tools/mermaid/MermaidEditor.vue')
-  },
-  {
-    path: '/markdown',
-    name: 'Markdown',
-    component: () => import('@/tools/markdown/MarkdownEditor.vue')
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+// 路由变化时更新页面标题
+router.beforeEach((to, from, next) => {
+  if (to.meta.title) {
+    document.title = `${to.meta.title} - ${t('app.name')}`
+  }
+  next()
 })
 
 export default router

@@ -1,16 +1,16 @@
 <template>
   <div class="home">
     <el-row :gutter="20">
-      <el-col :span="8" v-for="tool in tools" :key="tool.path">
-        <el-card class="tool-card" @click="navigateTo(tool.path)">
+      <el-col :span="8" v-for="tool in tools" :key="tool.id">
+        <el-card class="tool-card" @click="navigateTo(`/tools/${tool.id}`)">
           <template #header>
             <div class="card-header">
               <el-icon><component :is="tool.icon" /></el-icon>
-              <span>{{ tool.name }}</span>
+              <span>{{ $t(`tools.${tool.id}.title`) }}</span>
             </div>
           </template>
           <div class="card-content">
-            {{ tool.description }}
+            {{ $t(`tools.${tool.id}.description`) }}
           </div>
         </el-card>
       </el-col>
@@ -20,24 +20,9 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { HomeFilled, DataLine, Document } from '@element-plus/icons-vue'
+import tools from '@/config/tools'
 
 const router = useRouter()
-
-const tools = [
-  {
-    name: 'Mermaid',
-    path: '/mermaid',
-    icon: 'DataLine',
-    description: '在线 Mermaid 图表编辑器，支持流程图、时序图等多种图表类型'
-  },
-  {
-    name: 'Markdown',
-    path: '/markdown',
-    icon: 'Document',
-    description: 'Markdown 编辑器，支持实时预览和导出'
-  }
-]
 
 const navigateTo = (path) => {
   router.push(path)

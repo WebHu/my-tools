@@ -5,15 +5,15 @@
         <el-card class="editor-card">
           <template #header>
             <div class="card-header">
-              <span>编辑区</span>
+              <span>{{ $t('tools.mermaid.editor') }}</span>
               <div class="button-group">
                 <el-button size="small" type="success" @click="downloadSource">
                   <el-icon><Download /></el-icon>
-                  下载源码
+                  {{ $t('tools.mermaid.downloadSource') }}
                 </el-button>
                 <el-button size="small" type="warning" @click="downloadImage">
                   <el-icon><Picture /></el-icon>
-                  下载图片
+                  {{ $t('tools.mermaid.downloadImage') }}
                 </el-button>
               </div>
             </div>
@@ -22,7 +22,7 @@
             v-model="mermaidCode"
             type="textarea"
             :rows="30"
-            placeholder="在此输入 Mermaid 代码"
+            :placeholder="$t('tools.mermaid.placeholder')"
             @input="debouncedUpdate"
             class="code-editor"
           />
@@ -32,7 +32,7 @@
         <el-card class="preview-card">
           <template #header>
             <div class="card-header">
-              <span>预览区</span>
+              <span>{{ $t('tools.mermaid.preview') }}</span>
             </div>
           </template>
           <div class="preview-container" ref="previewContainer"></div>
@@ -47,6 +47,9 @@ import { Download, Picture, Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import mermaid from 'mermaid'
 import { onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const mermaidCode = ref<string>(`graph TD
     A[开始] --> B{判断}
@@ -78,7 +81,7 @@ const updatePreview = async (): Promise<void> => {
     const { svg } = await mermaid.render('mermaid-svg', mermaidCode.value)
     previewContainer.value.innerHTML = svg
   } catch (error: any) {
-    ElMessage.error('渲染失败：' + error.message)
+    ElMessage.error(t('tools.mermaid.renderError') + error.message)
   }
 }
 
@@ -106,7 +109,7 @@ const downloadImage = async (): Promise<void> => {
   try {
     const svgElement = previewContainer.value?.querySelector('svg')
     if (!svgElement) {
-      ElMessage.warning('请先生成预览图')
+      ElMessage.warning(t('tools.mermaid.generatePreviewFirst'))
       return
     }
 
@@ -114,7 +117,7 @@ const downloadImage = async (): Promise<void> => {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     if (!ctx) {
-      ElMessage.error('无法创建画布上下文')
+      ElMessage.error(t('tools.mermaid.canvasError'))
       return
     }
     
@@ -136,7 +139,7 @@ const downloadImage = async (): Promise<void> => {
     
     img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)))
   } catch (error: any) {
-    ElMessage.error('下载图片失败：' + error.message)
+    ElMessage.error(t('tools.mermaid.downloadError') + error.message)
   }
 }
 
