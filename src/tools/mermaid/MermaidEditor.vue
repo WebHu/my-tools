@@ -7,10 +7,6 @@
             <div class="card-header">
               <span>编辑区</span>
               <div class="button-group">
-                <el-button size="small" type="primary" @click="updatePreview">
-                  <el-icon><Refresh /></el-icon>
-                  更新预览
-                </el-button>
                 <el-button size="small" type="success" @click="downloadSource">
                   <el-icon><Download /></el-icon>
                   下载源码
@@ -25,7 +21,7 @@
           <el-input
             v-model="mermaidCode"
             type="textarea"
-            :rows="20"
+            :rows="30"
             placeholder="在此输入 Mermaid 代码"
             @input="debouncedUpdate"
             class="code-editor"
@@ -47,10 +43,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import mermaid from 'mermaid'
-import { Refresh, Download, Picture } from '@element-plus/icons-vue'
+import { Download, Picture, Refresh } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import mermaid from 'mermaid'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 const mermaidCode = ref<string>(`graph TD
     A[开始] --> B{判断}

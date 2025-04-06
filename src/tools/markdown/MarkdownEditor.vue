@@ -1,34 +1,36 @@
- <template>
-  <div class="p-4">
-    <el-row :gutter="20" class="h-[calc(100vh-100px)]">
+<template>
+  <div class="markdown-editor">
+    <el-row :gutter="20" class="editor-container">
       <el-col :span="12">
-        <el-card class="h-full bg-white dark:bg-gray-800">
+        <el-card class="editor-card">
           <template #header>
-            <div class="flex justify-between items-center">
-              <span class="text-lg font-semibold text-gray-900 dark:text-white">编辑区</span>
-              <el-button-group>
-                <el-button type="success" @click="downloadMarkdown">
-                  <el-icon><Download /></el-icon>
-                  下载 Markdown
+            <div class="card-header">
+              <span>编辑区</span>
+              <div class="button-group">
+                <el-button size="small" type="success" @click="downloadMarkdown">
+                  <el-icon>
+                    <Download />
+                  </el-icon>
+                  下载源码
                 </el-button>
-              </el-button-group>
+              </div>
             </div>
           </template>
           <el-input
             v-model="markdownContent"
             type="textarea"
-            :rows="20"
+            :rows="30"
             placeholder="在此输入 Markdown 内容"
             @input="updatePreview"
-            class="h-[calc(100%-60px)]"
+            class="code-editor"
           />
         </el-card>
       </el-col>
       <el-col :span="12">
-        <el-card class="h-full bg-white dark:bg-gray-800">
+        <el-card class="preview-card">
           <template #header>
-            <div class="flex justify-between items-center">
-              <span class="text-lg font-semibold text-gray-900 dark:text-white">预览区</span>
+            <div class="card-header">
+              <span>预览区</span>
             </div>
           </template>
           <div class="preview-container prose dark:prose-invert max-w-none" v-html="renderedContent"></div>
@@ -38,13 +40,12 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue'
+<script setup lang="ts">
+import { Download } from '@element-plus/icons-vue'
 import { marked } from 'marked'
-import { Download, Document } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { computed, ref } from 'vue'
 
-const markdownContent = ref(`# Markdown 编辑器
+const markdownContent = ref<string>(`# Markdown 编辑器
 
 这是一个简单的 Markdown 编辑器示例。
 
@@ -80,21 +81,16 @@ function hello() {
 // 配置 marked
 marked.setOptions({
   breaks: true,
-  gfm: true
+  gfm: true,
 })
 
 // 渲染 Markdown 内容
 const renderedContent = computed(() => {
-  return marked(markdownContent.value)
+  return marked.parse(markdownContent.value)
 })
 
-// 更新预览
-const updatePreview = () => {
-  // 实时预览通过 computed 属性自动处理
-}
-
 // 下载 Markdown 文件
-const downloadMarkdown = () => {
+const downloadMarkdown = (): void => {
   const blob = new Blob([markdownContent.value], { type: 'text/markdown' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -108,9 +104,94 @@ const downloadMarkdown = () => {
 </script>
 
 <style scoped>
+.markdown-editor {
+  padding: 20px;
+}
+
+.editor-container {
+  height: calc(100vh - 100px);
+}
+
+.editor-card,
+.preview-card {
+  height: 100%;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button-group {
+  display: flex;
+  gap: 3px;
+}
+
+.code-editor :deep(.el-textarea__inner) {
+  font-family: 'Fira Code', Monaco, Consolas, 'Courier New', monospace;
+  line-height: 1.6;
+  padding: 12px;
+  font-size: 14px;
+  background-color: #282c34;
+  color: #abb2bf;
+  border-radius: 4px;
+  tab-size: 2;
+  height: calc(100% - 20px);
+}
+
 .preview-container {
   height: calc(100% - 40px);
   overflow: auto;
   padding: 20px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+/* 暗黑模式样式 */
+html.dark .preview-container {
+  background-color: #1e1e1e;
+  color: #ddd;
+}
+
+/* 确保预览区在暗黑模式下可读性良好 */
+.prose.dark\:prose-invert :deep(pre) {
+  background-color: #282c34;
+  color: #abb2bf;
+}
+
+.prose.dark\:prose-invert :deep(code) {
+  color: #c678dd;
+}
+
+.prose.dark\:prose-invert :deep(a) {
+  color: #61afef;
+}
+
+.prose.dark\:prose-invert :deep(blockquote) {
+  border-left-color: #4b5563;
+  color: #9ca3af;
+}
+
+.prose.dark\:prose-invert :deep(h1),
+.prose.dark\:prose-invert :deep(h2),
+.prose.dark\:prose-invert :deep(h3),
+.prose.dark\:prose-invert :deep(h4),
+.prose.dark\:prose-invert :deep(h5),
+.prose.dark\:prose-invert :deep(h6) {
+  color: #e5e7eb;
+}
+
+.prose.dark\:prose-invert :deep(hr) {
+  border-color: #4b5563;
+}
+
+.prose.dark\:prose-invert :deep(table) {
+  border-color: #4b5563;
+}
+
+.prose.dark\:prose-invert :deep(th),
+.prose.dark\:prose-invert :deep(td) {
+  border-color: #4b5563;
 }
 </style>
