@@ -1,7 +1,7 @@
 <template>
   <div class="mermaid-editor">
-    <el-row :gutter="20" class="editor-container">
-      <el-col :span="12">
+    <el-row :gutter="20" class="editor-container" :class="{ 'fullscreen-mode': isFullscreen }">
+      <el-col :span="isFullscreen ? 0 : 12" v-show="!isFullscreen">
         <el-card class="editor-card">
           <template #header>
             <div class="card-header">
@@ -28,11 +28,31 @@
           />
         </el-card>
       </el-col>
-      <el-col :span="12">
-        <el-card class="preview-card">
+      <el-col :span="isFullscreen ? 24 : 12">
+        <el-card class="preview-card" :class="{ 'fullscreen-card': isFullscreen }">
           <template #header>
             <div class="card-header">
               <span>{{ $t('tools.mermaid.preview') }}</span>
+              <div class="button-group">
+                <el-button 
+                  v-if="isFullscreen" 
+                  size="small" 
+                  type="primary" 
+                  @click="exitFullscreen"
+                >
+                  <el-icon><FullScreen /></el-icon>
+                  {{ $t('tools.mermaid.exitFullscreen') }}
+                </el-button>
+                <el-button 
+                  v-else 
+                  size="small" 
+                  type="primary" 
+                  @click="enterFullscreen"
+                >
+                  <el-icon><FullScreen /></el-icon>
+                  {{ $t('tools.mermaid.enterFullscreen') }}
+                </el-button>
+              </div>
             </div>
           </template>
           <div class="preview-container" ref="previewContainer"></div>
@@ -43,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { Download, Picture, Refresh } from '@element-plus/icons-vue'
+import { Download, FullScreen, Picture } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import mermaid from 'mermaid'
 import { onMounted, onUnmounted, ref } from 'vue'
@@ -60,6 +80,7 @@ const mermaidCode = ref<string>(`graph TD
 
 const previewContainer = ref<HTMLElement | null>(null)
 let debounceTimer: number | null = null
+const isFullscreen = ref<boolean>(false)
 
 // 初始化 Mermaid
 mermaid.initialize({
@@ -143,6 +164,20 @@ const downloadImage = async (): Promise<void> => {
   }
 }
 
+// 进入全屏模式
+const enterFullscreen = (): void => {
+  isFullscreen.value = true
+  // 延迟重新渲染图表以适应新尺寸
+  setTimeout(updatePreview, 300)
+}
+
+// 退出全屏模式
+const exitFullscreen = (): void => {
+  isFullscreen.value = false
+  // 延迟重新渲染图表以适应新尺寸
+  setTimeout(updatePreview, 300)
+}
+
 onMounted(() => {
   updatePreview()
 })
@@ -161,8 +196,25 @@ onUnmounted(() => {
   height: calc(100vh - 100px);
 }
 
+.editor-container.fullscreen-mode {
+  height: 100vh;
+}
+
 .editor-card,
 .preview-card {
+  height: 100%;
+}
+
+.fullscreen-card {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  margin: 0;
+  border-radius: 0;
+  width: 100%;
   height: 100%;
 }
 
@@ -197,6 +249,11 @@ onUnmounted(() => {
   background-color: #f5f7fa;
   padding: 20px;
   border-radius: 4px;
+}
+
+.fullscreen-card .preview-container {
+  height: calc(100vh - 60px);
+  border-radius: 0;
 }
 
 .preview-container svg {
