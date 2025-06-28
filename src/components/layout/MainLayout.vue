@@ -83,7 +83,7 @@
 
       <el-footer class="footer">
         <div class="copyright">
-          © {{ currentYear }} {{ $t('app.name') }}. Powered by Gamehu }}
+          © {{ currentYear }} {{ $t('app.name') }}. Powered by Gamehu 
         </div>
       </el-footer>
     </el-container>
